@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.product.mapper.BaseCategory1Mapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.product.entity.BaseCategory1">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,name
+    </sql>
+
+
+    <resultMap id="CategoryTreeRM"
+               type="com.atguigu.gmall.web.CategoryVo">
+        <id property="categoryId" column="c1id"></id>
+        <result property="categoryName" column="c1name"></result>
+        <!--        一级分类  -->
+        <collection property="categoryChild"
+                    ofType="com.atguigu.gmall.web.CategoryVo">
+            <id property="categoryId" column="c2id"></id>
+            <result property="categoryName" column="c2name"></result>
+            <!--        二级分类  -->
+            <collection property="categoryChild"
+                        ofType="com.atguigu.gmall.web.CategoryVo">
+                <id property="categoryId" column="c3id"></id>
+                <result property="categoryName" column="c3name"></result>
+                <!--        三级分类  -->
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="getCategorysTree"
+            resultMap="CategoryTreeRM">
+        select bc1.id   c1id,
+               bc1.name c1name,
+               bc2.id   c2id,
+               bc2.name c2name,
+               bc3.id   c3id,
+               bc3.name c3name
+        from base_category1 bc1
+                 left join base_category2 bc2 on bc2.category1_id = bc1.id
+                 left join base_category3 bc3 on bc3.category2_id = bc2.id
+    </select>
+    <select id="getCategoryView"
+            resultType="com.atguigu.gmall.product.entity.CategroyViewEntity">
+        select bc1.id c1id,bc1.name c1name,
+               bc2.id  c2id, bc2.name c2name,
+               bc3.id  c3id, bc3.name c3name
+        from base_category1 bc1
+                 left join base_category2 bc2 on bc2.category1_id=bc1.id
+                 left join base_category3 bc3 on bc3.category2_id=bc2.id
+        where bc3.id=#{c3Id}
+    </select>
+
+</mapper>

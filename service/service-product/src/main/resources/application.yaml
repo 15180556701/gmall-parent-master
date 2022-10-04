@@ -1,0 +1,35 @@
+server:
+  port: 8000
+
+
+
+
+
+spring:
+  datasource:
+    #   https://cn.bing.com/search?q=pojo
+    #  协议名://主机地址:端口号/路径?参数
+    url: jdbc:mysql://192.168.6.101:3306/gmall_product?useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  profiles:
+    include: sharding
+#  profiles:
+#    active: sharding  #激活指定的profile场景配置（application-场景.yaml）+默认场景(application.yaml)
+
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+
+app:
+  minio:
+    endpoint: http://192.168.6.101:9000
+    bucket-name: mall
+    secret-key: admin123456
+    access-key: admin
+

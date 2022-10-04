@@ -1,0 +1,27 @@
+server:
+  port: 80
+
+#编写请求路由规则
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+
+      routes:
+        - id: product_route
+          uri: lb://service-product
+          predicates:
+            - Path=/admin/product/**
+
+
+        - id: weball_route
+          uri: lb://web-all
+          predicates:
+            - Host=**.gmall.com,gmall.com
