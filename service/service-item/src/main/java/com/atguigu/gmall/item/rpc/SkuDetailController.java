@@ -6,10 +6,7 @@ import com.atguigu.gmall.item.service.SkuDetailService;
 import com.atguigu.gmall.web.SkuDetailVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/api/inner/item")
@@ -25,12 +22,17 @@ public class SkuDetailController {
      * @param skuId
      * @return
      */
+
+
     @GetMapping("/detail/{skuId}")
     public Result<SkuDetailVo> skuDetail(@PathVariable("skuId") Long skuId){
 
         log.info("商品详情服务：正在查询 {} 商品详情",skuId);
+
         SkuDetailVo vo = skuDetailService.skuDetail(skuId);
 
         return Result.ok(vo);
     }
+
+
 }

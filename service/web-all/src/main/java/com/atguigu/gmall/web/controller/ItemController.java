@@ -29,6 +29,11 @@ public class ItemController {
         Result<SkuDetailVo> result = itemFeignClient.skuDetail(skuId);
         SkuDetailVo skuDetailVo = result.getData();
 
+        if (skuDetailVo==null){
+            return "item/error";
+        }
+
+
         // {category1Id,category1Name,category2Id,category2Name,category3Id,category3Name}
         //1、当前sku所属的完整分类信息
         model.addAttribute("categoryView",skuDetailVo.getCategoryView());

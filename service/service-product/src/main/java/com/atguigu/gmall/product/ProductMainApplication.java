@@ -2,6 +2,8 @@ package com.atguigu.gmall.product;
 
 import com.atguigu.gmall.common.config.minio.annotation.EnableMinio;
 import com.atguigu.gmall.common.config.swagger.annotation.EnableRestAPIDocs;
+import com.atguigu.gmall.common.exception.EnableAutoExceptionHandler;
+import com.atguigu.gmall.common.redisson.annotation.EnableRedisson;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
@@ -21,6 +23,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //@EnableDiscoveryClient  //开启服务发现
 //@SpringBootApplication
 
+
+@EnableRedisson
+@EnableAutoExceptionHandler
 @EnableTransactionManagement
 @EnableRestAPIDocs
 @EnableMinio

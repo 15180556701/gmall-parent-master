@@ -25,3 +25,10 @@ spring:
           uri: lb://web-all
           predicates:
             - Host=**.gmall.com,gmall.com
+
+        #用于压测，之后就可以通过网关来进行压测的服务，当在网页输入该请求时，就会被网关发送给service-item，
+        #但是网关会发现有三个service-item，因此这三个服务都会发一份，以此达到分布式压力测试的效果
+        - id: increment_rout
+          uri: lb://service-item
+          predicates:
+            - Path=/increment

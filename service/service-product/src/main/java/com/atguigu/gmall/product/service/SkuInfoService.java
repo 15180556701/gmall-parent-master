@@ -2,9 +2,11 @@ package com.atguigu.gmall.product.service;
 
 import com.atguigu.gmall.product.entity.SkuInfo;
 import com.atguigu.gmall.product.vo.SkuInfoSaveVo;
+import com.atguigu.gmall.product.vo.SkuInfoUpdateVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author lfy
@@ -32,4 +34,11 @@ public interface SkuInfoService extends IService<SkuInfo> {
      * @return
      */
     BigDecimal getSkuPrice(Long skuId);
+
+    /*
+    查询所有skuid
+     */
+    List<Long> getAllSkuId();
+
+    void updateSkuInfo(SkuInfoUpdateVo vo);
 }

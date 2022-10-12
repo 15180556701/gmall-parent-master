@@ -5,6 +5,7 @@ import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.product.entity.SkuInfo;
 import com.atguigu.gmall.product.service.SkuInfoService;
 import com.atguigu.gmall.product.vo.SkuInfoSaveVo;
+import com.atguigu.gmall.product.vo.SkuInfoUpdateVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,14 @@ public class SkuController {
     public Result cancelSale(@PathVariable("skuId") Long skuId){
 
         skuInfoService.changeOnSale(skuId,0);
+        return Result.ok();
+    }
+
+    @PutMapping("/updateSaveInfo")
+    public Result updateSkuInfo(SkuInfoUpdateVo vo){
+
+        //修改业务
+        skuInfoService.updateSkuInfo(vo);
         return Result.ok();
     }
 }

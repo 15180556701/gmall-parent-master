@@ -5,6 +5,7 @@ import com.atguigu.gmall.product.entity.CategroyViewEntity;
 import com.atguigu.gmall.web.CategoryVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 * @createDate 2022-09-26 11:46:23
 * @Entity com.atguigu.gmall.product.entity.BaseCategory1
 */
+@Repository
 public interface BaseCategory1Mapper extends BaseMapper<BaseCategory1> {
 
     List<CategoryVo> getCategorysTree();

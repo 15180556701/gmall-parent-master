@@ -12,6 +12,7 @@ public enum ResultCodeEnum {
     SUCCESS(200,"成功"),
     FAIL(201, "失败"),
     SERVICE_ERROR(2012, "服务异常"),
+    REDIS_DATA_NOT_EXIST(30001,"缓存中数据不存在"),
 
     PAY_RUN(205, "支付中"),
 

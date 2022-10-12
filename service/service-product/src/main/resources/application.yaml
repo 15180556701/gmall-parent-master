@@ -4,8 +4,11 @@ server:
 
 
 
-
 spring:
+#  redis:
+#    host: 192.168.6.101
+#    password: root
+#    port: 6379
   datasource:
     #   https://cn.bing.com/search?q=pojo
     #  协议名://主机地址:端口号/路径?参数
@@ -20,6 +23,7 @@ spring:
       max-request-size: 100MB
   profiles:
     include: sharding
+
 #  profiles:
 #    active: sharding  #激活指定的profile场景配置（application-场景.yaml）+默认场景(application.yaml)
 

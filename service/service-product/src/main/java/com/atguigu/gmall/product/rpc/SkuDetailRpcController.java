@@ -111,12 +111,21 @@ public class SkuDetailRpcController {
 
     /**
      * 6、根据spu_id，查询这个spu下面的所有sku涉及到的所有销售属性值组合，
-     * 返回：Map（"127|128":49, "126|129": 50） 的 json字符串
+     * 返回：Map（"120|111":49, "131|151": 50） 的 json字符串
      */
     @GetMapping("/skuinfo/valuesskujson/{spuId}")
     public Result<String>  getSpuValuesSkuJson(@PathVariable("spuId")Long spuId){
 
         String json = spuSaleAttrService.getSpuValuesSkuJson(spuId);
         return Result.ok(json);
+    }
+
+    /*
+    获取所有skuid
+     */
+    @GetMapping("/skuIdList")
+    public Result<List<Long>> getAllSkuId(){
+        List<Long> skuIdList = skuInfoService.getAllSkuId();
+        return Result.ok(skuIdList);
     }
 }

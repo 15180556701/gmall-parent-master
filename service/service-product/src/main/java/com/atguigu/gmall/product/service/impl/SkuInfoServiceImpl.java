@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.product.entity.SkuAttrValue;
 import com.atguigu.gmall.product.entity.SkuImage;
 import com.atguigu.gmall.product.entity.SkuSaleAttrValue;
@@ -7,18 +8,26 @@ import com.atguigu.gmall.product.service.SkuAttrValueService;
 import com.atguigu.gmall.product.service.SkuImageService;
 import com.atguigu.gmall.product.service.SkuSaleAttrValueService;
 import com.atguigu.gmall.product.vo.SkuInfoSaveVo;
+import com.atguigu.gmall.product.vo.SkuInfoUpdateVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.product.entity.SkuInfo;
 import com.atguigu.gmall.product.service.SkuInfoService;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +35,7 @@ import java.util.stream.Collectors;
  * @description 针对表【sku_info(库存单元表)】的数据库操作Service实现
  * @createDate 2022-09-26 11:46:23
  */
+@SuppressWarnings("all")
 @Slf4j
 @Service
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
@@ -42,6 +52,26 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
     @Autowired
     SkuSaleAttrValueService saleAttrValueService;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    RedissonClient redissonClient;
+
+    @PostConstruct
+    public void initSkuIdBloom(){
+
+        //1、布隆初始化
+        RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(RedisConst.BLOOM_SKUID);
+        if (!bloomFilter.isExists()){
+            bloomFilter.tryInit(1000000,0.00001);
+            List<Long> skuId = getAllSkuId();
+            skuId.stream().forEach(item->{
+                bloomFilter.add(item);
+            });
+        }
+    }
 
 
     @Transactional
@@ -93,6 +123,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
         saleAttrValueService.saveBatch(saleAttrValues);
 
+        //把商品信息添加到过滤器
+        RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(RedisConst.BLOOM_SKUID);
+        bloomFilter.add(skuId);
+
         log.info("sku信息保存成功： skuId={}",skuId);
 
     }
@@ -109,6 +143,27 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
         BigDecimal price =  skuInfoMapper.getSkuPrice(skuId);
         return price;
+    }
+
+    @Override
+    public List<Long> getAllSkuId() {
+        return skuInfoMapper.getAllSkuId();
+    }
+
+    @Override
+    public void updateSkuInfo(SkuInfoUpdateVo vo) {
+        //1、去数据库修改
+
+
+        //2延迟双删
+        //2.1、先立即删
+        stringRedisTemplate.delete(RedisConst.SKU_DETAIL_CACHE_PREFIX+vo.getId());
+        //2.2、再延迟删
+        ScheduledExecutorService pool = Executors.newScheduledThreadPool(4);
+        pool.schedule(()->{
+            stringRedisTemplate.delete(RedisConst.SKU_DETAIL_CACHE_PREFIX+vo.getId());
+        }, 10, TimeUnit.SECONDS);
+
     }
 }
 
